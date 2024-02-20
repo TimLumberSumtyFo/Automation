@@ -1,5 +1,3 @@
-$PrintixInstallerURL = ('https://api.printix.net/v1/software/tenants/{0}/appl/CLIENT/os/WIN/type/MSI' -f $PrintixTenantId)
-
 function Install-PrintixClient {
 
     [CmdletBinding()]
@@ -38,6 +36,7 @@ function Install-PrintixClient {
             New-Item -Path $PrintixSavePath -ItemType Directory | Out-Null
         }
         $PrintixInstallerPath = "$PrintixSavePath\$PrintixFileName"
+        $PrintixInstallerURL = ('https://api.printix.net/v1/software/tenants/{0}/appl/CLIENT/os/WIN/type/MSI' -f $PrintixTenantId)
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         Invoke-WebRequest -Uri $PrintixInstallerURL -OutFile $PrintixInstallerPath -Headers @{'Accept' = 'application/octet-stream'}
         if(Test-Path $PrintixInstallerPath){
