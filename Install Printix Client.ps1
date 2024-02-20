@@ -12,6 +12,25 @@ function Install-PrintixClient {
 
     )
 
+    if(((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\printix' -ErrorAction SilentlyContinue).UninstallString)){
+        ### Printix client is installed
+        $DetectedPrintixTenantId = (Get-ItemProperty 'HKLM:\SOFTWARE\printix.net\Printix Client\Tenant').TenantId
+        $DetectedPrintixTenantName = (Get-ItemProperty 'HKLM:\SOFTWARE\printix.net\Printix Client\Tenant').TenantName
+    
+        if($DetectedPrintixTenantName | Select-String "PrintixAutoName"){
+            Write-Host "Printix Client is already installed, but has not been authenticated to.`r`nDetails:`r`nTenant ID: $DetectedPrintixTenantId`r`nTenant Name: $DetectedPrintixTenantName"
+            EXIT
+        }
+        else{
+            Write-Host "Printix Client is already installed!`r`nDetails:`r`nTenant ID: $DetectedPrintixTenantId`r`nTenant Name: $DetectedPrintixTenantName"
+            EXIT
+        }
+    }
+    else{
+        ### Printix client is not installed
+        Write-Host "Printix client is not installed...downloading and installing now..."
+    }
+
     try{
         $PrintixFileName = "CLIENT_{$PrintixTenantDomain}_{$PrintixTenantId}.msi"
         $PrintixSavePath = "$Env:SystemDrive\Temp\Printix"
@@ -35,26 +54,4 @@ function Install-PrintixClient {
     if(((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\printix' -ErrorAction SilentlyContinue).UninstallString)){
             Write-Host "Printix client installed successfully!"
     }
-}
-
-function KickOff {
-
-    if(((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\printix' -ErrorAction SilentlyContinue).UninstallString)){
-        ### Printix client is installed
-        $DetectedPrintixTenantId = (Get-ItemProperty 'HKLM:\SOFTWARE\printix.net\Printix Client\Tenant').TenantId
-        $DetectedPrintixTenantName = (Get-ItemProperty 'HKLM:\SOFTWARE\printix.net\Printix Client\Tenant').TenantName
-    
-        if($DetectedPrintixTenantName | Select-String "PrintixAutoName"){
-            Write-Host "Printix Client is already installed, but has not been authenticated to.`r`nDetails:`r`nTenant ID: $DetectedPrintixTenantId`r`nTenant Name: $DetectedPrintixTenantName"
-        }
-        else{
-            Write-Host "Printix Client is already installed!`r`nDetails:`r`nTenant ID: $DetectedPrintixTenantId`r`nTenant Name: $DetectedPrintixTenantName"
-        }
-    }
-    else{
-        ### Printix client is not installed
-        Write-Host "Printix client is not installed...downloading and installing now..."
-        Install-PrintixClient
-    }
-
 }
