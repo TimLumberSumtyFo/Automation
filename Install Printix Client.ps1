@@ -7,10 +7,11 @@ function Install-PrintixClient {
         [String]$TenantDomain,
         [Parameter(position = 1)]
         [String]$TenantId
+
     )
 
-    $TenantDomain = $TenantDomain
-    $TenantId = $TenantId
+    $PrintixTenantDomain = $TenantDomain
+    $PrintixTenantId = $TenantId
 
     if(((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\printix' -ErrorAction SilentlyContinue).UninstallString)){
         ### Printix client is installed
