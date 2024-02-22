@@ -7,8 +7,10 @@ function Install-PrintixClient {
         [String]$TenantDomain,
         [Parameter(position = 1)]
         [String]$TenantId
-
     )
+
+    $TenantDomain = $TenantDomain
+    $TenantId = $TenantId
 
     if(((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\printix' -ErrorAction SilentlyContinue).UninstallString)){
         ### Printix client is installed
@@ -36,7 +38,7 @@ function Install-PrintixClient {
             New-Item -Path $PrintixSavePath -ItemType Directory | Out-Null
         }
         $PrintixInstallerPath = "$PrintixSavePath\$PrintixFileName"
-        $PrintixInstallerURL = ('https://api.printix.net/v1/software/tenants/{0}/appl/CLIENT/os/WIN/type/MSI' -f $PrintixTenantId)
+        $PrintixInstallerURL = "https://api.printix.net/v1/software/tenants/$PrintixTenantId/appl/CLIENT/os/WIN/type/MSI"
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         Invoke-WebRequest -Uri $PrintixInstallerURL -OutFile $PrintixInstallerPath -Headers @{'Accept' = 'application/octet-stream'}
         if(Test-Path $PrintixInstallerPath){
